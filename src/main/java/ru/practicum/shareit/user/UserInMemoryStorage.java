@@ -1,11 +1,10 @@
 package ru.practicum.shareit.user;
 
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.exception.UserAlreadyExistsException;
 import ru.practicum.shareit.user.dto.UserDto;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -13,33 +12,41 @@ public class UserInMemoryStorage {
 
     private static int id = 1;
 
-    private static List<User> users = new ArrayList<>();
+    private static Map<String, User> users = new HashMap<>();
 
     public User addUser(User user) {
         user.setId(id++);
-        users.add(user);
+        users.put(user.getEmail(), user);
         return user;
     }
 
     public User getUser(Integer userId) {
-        return users.stream()
+        return users.values()
+                .stream()
                 .filter(user -> userId.equals(user.getId()))
                 .collect(Collectors.toList())
                 .get(0);
     }
 
-    public User updateUser(User user) {
-        users.add(user.getId(), user);
+    public User updateUser(User user, String email) {
+        users.remove(email);
+        users.put(user.getEmail(), user);
         return user;
     }
 
     public void deleteUser(Integer userId) {
-        users.forEach(user -> {
-            if (userId.equals(user.getId())) users.remove(user);
-        });
+        String userEmail = users.values()
+                .stream()
+                        .filter(user -> userId.equals(user.getId())).collect(Collectors.toList()).get(0).getEmail();
+        users.remove(userEmail);
     }
 
     public Collection<User> getAll() {
-        return users;
+        return users.values();
+    }
+
+    public boolean findByEmail(String email){
+        return users.containsKey(email);
+
     }
 }

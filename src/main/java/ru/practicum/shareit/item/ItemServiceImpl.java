@@ -34,13 +34,13 @@ public class ItemServiceImpl implements ItemService{
         if (item.getName() != oldItem.getName()) oldItem.setName(item.getName());
         if (item.getDescription() != oldItem.getDescription()) oldItem.setDescription(item.getDescription());
 
-
-        if (storage.getUserIdByItemId(itemId).equals(ownerId)){
+        try {
             storage.updateItem(oldItem, ownerId);
             return itemDto;
-        } else {
+        } catch (IndexOutOfBoundsException e){
             throw new NotFoundException("Item is not found");
         }
+
     }
     @Override
 
