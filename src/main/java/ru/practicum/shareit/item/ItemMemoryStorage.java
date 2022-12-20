@@ -45,7 +45,7 @@ public class ItemMemoryStorage {
 
     public Collection<Item> getAllOwnersItems(Integer ownerId) {
         List<Item> itemsToReturn = new ArrayList<>();
-        itemOwnerMap.keySet().stream().forEach(itemId -> {
+        itemOwnerMap.keySet().forEach(itemId -> {
             if(itemOwnerMap.get(itemId).equals(ownerId)){
                 itemsToReturn.add(items.get(itemId));
             }

@@ -56,7 +56,7 @@ public class UserInMemoryStorage {
         this.users.values()
                 .stream()
                 .filter(user -> userId.equals(user.getId()))
-                .forEach(user -> usersList.add(user));
+                .forEach(usersList::add);
         return usersList.size() != 0;
 
     }

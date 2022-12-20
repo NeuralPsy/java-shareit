@@ -11,14 +11,14 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 @Service
-public class ItemServiceImpl implements ItemService{
+public class ItemServiceImpl implements ItemService {
 
     private final ItemMemoryStorage itemMemoryStorage;
 
     private final UserInMemoryStorage userInMemoryStorage;
 
     @Autowired
-    public ItemServiceImpl(ItemMemoryStorage storage, UserInMemoryStorage userInMemoryStorage){
+    public ItemServiceImpl(ItemMemoryStorage storage, UserInMemoryStorage userInMemoryStorage) {
         this.itemMemoryStorage = storage;
         this.userInMemoryStorage = userInMemoryStorage;
     }
@@ -65,7 +65,7 @@ public class ItemServiceImpl implements ItemService{
     public Collection<ItemDto> getAllOwnersItems(Integer ownerId) {
         return itemMemoryStorage.getAllOwnersItems(ownerId)
                 .stream()
-                .map(item -> ItemMapper.itemToDto(item))
+                .map(ItemMapper::itemToDto)
                 .collect(Collectors.toList());
     }
 
@@ -73,14 +73,14 @@ public class ItemServiceImpl implements ItemService{
     public Collection<ItemDto> findItemByWord(String text) {
         return  itemMemoryStorage.findItemByWord(text)
                 .stream()
-                .map(item -> ItemMapper.itemToDto(item))
+                .map(ItemMapper::itemToDto)
                 .collect(Collectors.toList());
     }
     @Override
     public Collection<ItemDto> getAll() {
         return itemMemoryStorage.getAll()
                 .stream()
-                .map(item -> ItemMapper.itemToDto(item))
+                .map(ItemMapper::itemToDto)
                 .collect(Collectors.toList());
     }
 

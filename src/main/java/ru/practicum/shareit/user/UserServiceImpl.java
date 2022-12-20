@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService{
     public Collection<UserDto> getAll() {
         return storage.getAll()
                 .stream()
-                .map(user -> UserMapper.userToDto(user))
+                .map(UserMapper::userToDto)
                 .collect(Collectors.toList());
     }
 }
