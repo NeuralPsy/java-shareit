@@ -1,8 +1,6 @@
 package ru.practicum.shareit.user;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.exception.UserAlreadyExistsException;
-import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.*;
 import java.util.stream.Collectors;

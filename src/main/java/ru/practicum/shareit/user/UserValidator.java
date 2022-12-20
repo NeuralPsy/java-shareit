@@ -14,7 +14,7 @@ public class UserValidator {
 
 
     public static void doesExistById(Integer userId){
-        if (storage.getUser(userId).equals(null)) throw new NotFoundException("User is not found");
+        if (storage.getUser(userId) == null) throw new NotFoundException("User is not found");
 
     }
 
