@@ -13,7 +13,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidationExceptions(final ValidationException e){
+    public ErrorResponse handleValidationExceptions(final ValidationException e) {
         return new ErrorResponse(e.getMessage());
     }
 
@@ -22,32 +22,29 @@ public class ErrorHandler {
             WrongEmailFormatException.class,
             EmptyItemFieldException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleBadRequest(final RuntimeException e){
+    public ErrorResponse handleBadRequest(final RuntimeException e) {
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler({
             NotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFound(final RuntimeException e){
+    public ErrorResponse handleNotFound(final RuntimeException e) {
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler({UserAlreadyExistsException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleOtherExceptions(final RuntimeException e){
+    public ErrorResponse handleOtherExceptions(final RuntimeException e) {
         return new ErrorResponse(e.getMessage());
     }
 
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleOtherExceptions(final Throwable e){
+    public ErrorResponse handleOtherExceptions(final Throwable e) {
         return new ErrorResponse(e.getMessage());
     }
-
-
-
 
 
 }

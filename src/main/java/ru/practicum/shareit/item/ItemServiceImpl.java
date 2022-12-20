@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 public class ItemServiceImpl implements ItemService {
     private final ItemMemoryStorage itemMemoryStorage;
     private final UserInMemoryStorage userInMemoryStorage;
+
     @Autowired
     public ItemServiceImpl(ItemMemoryStorage storage, UserInMemoryStorage userInMemoryStorage) {
         this.itemMemoryStorage = storage;
@@ -23,8 +24,10 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto addItem(ItemDto itemDto, Integer ownerId) {
         if (!userInMemoryStorage.findById(ownerId)) throw new NotFoundException("User is not found");
-        if (itemDto.getName() == null || itemDto.getName().isEmpty()) throw new EmptyItemFieldException("Item name is empty");
-        if (itemDto.getDescription() == null || itemDto.getDescription().isEmpty()) throw new EmptyItemFieldException("Item description is empty");
+        if (itemDto.getName() == null || itemDto.getName().isEmpty())
+            throw new EmptyItemFieldException("Item name is empty");
+        if (itemDto.getDescription() == null || itemDto.getDescription().isEmpty())
+            throw new EmptyItemFieldException("Item description is empty");
         if (itemDto.getAvailable() == null) throw new EmptyItemFieldException("Item availability field is empty");
 
         Item item = ItemMapper.dtoToItem(itemDto);
@@ -34,13 +37,16 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto editItem(Integer itemId, Integer ownerId, ItemDto itemDto) {
         if (userInMemoryStorage.getUser(ownerId) == null) throw new NotFoundException("User is not found");
-        if (!itemMemoryStorage.getUserIdByItemId(itemId).equals(ownerId)) throw new NotFoundException("User is not an owner of the item");
+        if (!itemMemoryStorage.getUserIdByItemId(itemId).equals(ownerId))
+            throw new NotFoundException("User is not an owner of the item");
 
         Item oldItem = itemMemoryStorage.getItemById(itemId);
 
-        if (itemDto.getAvailable() != oldItem.getAvailable() && itemDto.getAvailable() != null) oldItem.setAvailable(itemDto.getAvailable());
+        if (itemDto.getAvailable() != oldItem.getAvailable() && itemDto.getAvailable() != null)
+            oldItem.setAvailable(itemDto.getAvailable());
         if (itemDto.getName() != oldItem.getName() && itemDto.getName() != null) oldItem.setName(itemDto.getName());
-        if (itemDto.getDescription() != oldItem.getDescription() && itemDto.getDescription() != null) oldItem.setDescription(itemDto.getDescription());
+        if (itemDto.getDescription() != oldItem.getDescription() && itemDto.getDescription() != null)
+            oldItem.setDescription(itemDto.getDescription());
 
         try {
             itemMemoryStorage.updateItem(oldItem);
@@ -69,7 +75,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Collection<ItemDto> findItemByWord(String text) {
-        return  itemMemoryStorage.findItemByWord(text)
+        return itemMemoryStorage.findItemByWord(text)
                 .stream()
                 .map(ItemMapper::itemToDto)
                 .collect(Collectors.toList());
@@ -85,6 +91,6 @@ public class ItemServiceImpl implements ItemService {
 
     public String removeItem(Integer itemId) {
         itemMemoryStorage.removeItem(itemId);
-        return "Item "+itemId+" is deleted";
+        return "Item " + itemId + " is deleted";
     }
 }

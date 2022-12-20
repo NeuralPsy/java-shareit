@@ -16,8 +16,7 @@ public class ItemMemoryStorage {
     private static final Map<Integer, Item> items = new HashMap<>();
 
 
-
-    public ItemDto addItem(Item item, Integer ownerId){
+    public ItemDto addItem(Item item, Integer ownerId) {
         item.setId(itemId++);
         items.put(item.getId(), item);
         itemOwnerMap.put(item.getId(), ownerId);
@@ -25,20 +24,20 @@ public class ItemMemoryStorage {
         return ItemMapper.itemToDto(item);
     }
 
-    public void updateItem(Item item){
+    public void updateItem(Item item) {
         items.put(item.getId(), item);
     }
 
-    public Collection<Integer> getUserIds(){
+    public Collection<Integer> getUserIds() {
         return itemOwnerMap.values();
     }
 
 
-    public Integer getUserIdByItemId(Integer itemId){
-        return  itemOwnerMap.get(itemId);
+    public Integer getUserIdByItemId(Integer itemId) {
+        return itemOwnerMap.get(itemId);
     }
 
-    public Item getItemById(Integer itemId){
+    public Item getItemById(Integer itemId) {
         Item item = items.get(itemId);
         return item;
     }
@@ -46,12 +45,12 @@ public class ItemMemoryStorage {
     public Collection<Item> getAllOwnersItems(Integer ownerId) {
         List<Item> itemsToReturn = new ArrayList<>();
         itemOwnerMap.keySet().forEach(itemId -> {
-            if(itemOwnerMap.get(itemId).equals(ownerId)){
+            if (itemOwnerMap.get(itemId).equals(ownerId)) {
                 itemsToReturn.add(items.get(itemId));
             }
         });
 
-        return  itemsToReturn;
+        return itemsToReturn;
     }
 
     public Collection<Item> findItemByWord(String text) {

@@ -11,11 +11,11 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final UserInMemoryStorage storage;
 
-    public UserServiceImpl(UserInMemoryStorage storage){
+    public UserServiceImpl(UserInMemoryStorage storage) {
         this.storage = storage;
     }
 
@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService{
     @Override
     public String deleteUser(Integer userId) {
         storage.deleteUser(userId);
-        return "User "+userId+" is deleted";
+        return "User " + userId + " is deleted";
     }
 
     @Override

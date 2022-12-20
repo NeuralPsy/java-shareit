@@ -46,14 +46,14 @@ public class UserInMemoryStorage {
         return users.values();
     }
 
-    public boolean findByEmail(String email){
+    public boolean findByEmail(String email) {
         return users.containsKey(email);
 
     }
 
-    public boolean findById(Integer userId){
+    public boolean findById(Integer userId) {
         List<User> usersList = new ArrayList<>();
-        this.users.values()
+        users.values()
                 .stream()
                 .filter(user -> userId.equals(user.getId()))
                 .forEach(usersList::add);
