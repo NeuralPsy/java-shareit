@@ -12,17 +12,13 @@ import java.util.stream.Collectors;
 
 @Service
 public class ItemServiceImpl implements ItemService {
-
     private final ItemMemoryStorage itemMemoryStorage;
-
     private final UserInMemoryStorage userInMemoryStorage;
-
     @Autowired
     public ItemServiceImpl(ItemMemoryStorage storage, UserInMemoryStorage userInMemoryStorage) {
         this.itemMemoryStorage = storage;
         this.userInMemoryStorage = userInMemoryStorage;
     }
-
 
     @Override
     public ItemDto addItem(ItemDto itemDto, Integer ownerId) {
@@ -34,6 +30,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = ItemMapper.dtoToItem(itemDto);
         return itemMemoryStorage.addItem(item, ownerId);
     }
+
     @Override
     public ItemDto editItem(Integer itemId, Integer ownerId, ItemDto itemDto) {
         if (userInMemoryStorage.getUser(ownerId) == null) throw new NotFoundException("User is not found");
@@ -54,6 +51,7 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.itemToDto(itemMemoryStorage.getItemById(itemId));
 
     }
+
     @Override
 
     public ItemDto getItemById(Integer itemId) {
@@ -76,6 +74,7 @@ public class ItemServiceImpl implements ItemService {
                 .map(ItemMapper::itemToDto)
                 .collect(Collectors.toList());
     }
+
     @Override
     public Collection<ItemDto> getAll() {
         return itemMemoryStorage.getAll()
