@@ -47,7 +47,7 @@ public class ItemServiceImpl implements ItemService{
 
         try {
             itemMemoryStorage.updateItem(oldItem);
-        } catch (IndexOutOfBoundsException e){
+        } catch (IndexOutOfBoundsException e) {
             throw new NotFoundException("Item is not found");
         }
 
