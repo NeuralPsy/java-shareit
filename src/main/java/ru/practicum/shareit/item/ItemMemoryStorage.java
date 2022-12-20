@@ -11,9 +11,9 @@ import java.util.stream.Collectors;
 public class ItemMemoryStorage {
 
     private static int itemId = 1;
-    private static Map<Integer, Integer> itemOwnerMap = new HashMap<>();
+    private static final Map<Integer, Integer> itemOwnerMap = new HashMap<>();
 
-    private static Map<Integer, Item> items = new HashMap<>();
+    private static final Map<Integer, Item> items = new HashMap<>();
 
 
 
@@ -72,7 +72,7 @@ public class ItemMemoryStorage {
                         .toLowerCase()
                         .contains(lowerText) ||
                         item.getName().toLowerCase()
-                                .contains(lowerText)) && item.getAvailable() == true)
+                                .contains(lowerText)) && item.getAvailable())
                 .collect(Collectors.toList());
     }
 

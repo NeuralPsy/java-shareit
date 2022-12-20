@@ -12,7 +12,7 @@ public class UserInMemoryStorage {
 
     private static int id = 1;
 
-    private static Map<String, User> users = new HashMap<>();
+    private static final Map<String, User> users = new HashMap<>();
 
     public User addUser(User user) {
         user.setId(id++);
