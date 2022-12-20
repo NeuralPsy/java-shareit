@@ -42,7 +42,7 @@ public class ItemController {
         return service.getAllOwnersItems(ownerId);
     }
 
-    @GetMapping("/items/search")
+    @GetMapping("/search")
     public Collection<ItemDto> findItemByWord(@RequestParam("text") String text){
         return service.findItemByWord(text);
     }

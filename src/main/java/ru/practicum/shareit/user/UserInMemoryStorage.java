@@ -37,7 +37,10 @@ public class UserInMemoryStorage {
     public void deleteUser(Integer userId) {
         String userEmail = users.values()
                 .stream()
-                        .filter(user -> userId.equals(user.getId())).collect(Collectors.toList()).get(0).getEmail();
+                .filter(user -> userId.equals(user.getId()))
+                .collect(Collectors.toList())
+                .get(0)
+                .getEmail();
         users.remove(userEmail);
     }
 
@@ -47,6 +50,16 @@ public class UserInMemoryStorage {
 
     public boolean findByEmail(String email){
         return users.containsKey(email);
+
+    }
+
+    public boolean findById(Integer userId){
+        List<User> usersList = new ArrayList<>();
+        this.users.values()
+                .stream()
+                .filter(user -> userId.equals(user.getId()))
+                .forEach(user -> usersList.add(user));
+        return usersList.size() != 0;
 
     }
 }

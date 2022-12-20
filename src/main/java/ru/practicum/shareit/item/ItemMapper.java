@@ -12,9 +12,8 @@ public class ItemMapper {
         ItemDto itemDto = new ItemDto();
         itemDto.setId(item.getId());
         itemDto.setName(item.getName());
-        itemDto.setOwner(item.getOwner());
         itemDto.setDescription(item.getDescription());
-        itemDto.setAvailable(item.isAvailable());
+        itemDto.setAvailable(item.getAvailable());
 
         return itemDto;
     }
@@ -23,9 +22,8 @@ public class ItemMapper {
         Item item = new Item();
         item.setId(itemDto.getId());
         item.setName(itemDto.getName());
-        item.setOwner(itemDto.getOwner());
         item.setDescription(itemDto.getDescription());
-        item.setAvailable(itemDto.isAvailable());
+        item.setAvailable(itemDto.getAvailable());
 
         return item;
     }
