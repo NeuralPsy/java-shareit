@@ -1,6 +1,7 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.storage;
 
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
@@ -8,7 +9,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
-public class ItemMemoryStorage {
+public class ItemInMemoryStorage {
 
     private static int itemId = 1;
     private static final Map<Integer, Integer> itemOwnerMap = new HashMap<>();
@@ -44,9 +45,9 @@ public class ItemMemoryStorage {
 
     public Collection<Item> getAllOwnersItems(Integer ownerId) {
         List<Item> itemsToReturn = new ArrayList<>();
-        itemOwnerMap.keySet().forEach(itemId -> {
-            if (itemOwnerMap.get(itemId).equals(ownerId)) {
-                itemsToReturn.add(items.get(itemId));
+        itemOwnerMap.keySet().forEach(key -> {
+            if (itemOwnerMap.get(key).equals(ownerId)) {
+                itemsToReturn.add(items.get(key));
             }
         });
 

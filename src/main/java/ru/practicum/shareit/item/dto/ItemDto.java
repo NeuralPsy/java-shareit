@@ -4,9 +4,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
 
-/**
- * TODO Sprint add-controllers.
- */
+
 @Data
 public class ItemDto {
     private int id;

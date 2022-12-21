@@ -1,23 +1,25 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.*;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.UserInMemoryStorage;
+import ru.practicum.shareit.item.storage.ItemInMemoryStorage;
+import ru.practicum.shareit.user.storage.UserInMemoryStorage;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 
 @Service
 public class ItemServiceImpl implements ItemService {
-    private final ItemMemoryStorage itemMemoryStorage;
+    private final ItemInMemoryStorage itemInMemoryStorage;
     private final UserInMemoryStorage userInMemoryStorage;
 
     @Autowired
-    public ItemServiceImpl(ItemMemoryStorage storage, UserInMemoryStorage userInMemoryStorage) {
-        this.itemMemoryStorage = storage;
+    public ItemServiceImpl(ItemInMemoryStorage storage, UserInMemoryStorage userInMemoryStorage) {
+        this.itemInMemoryStorage = storage;
         this.userInMemoryStorage = userInMemoryStorage;
     }
 
@@ -31,16 +33,16 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getAvailable() == null) throw new EmptyItemFieldException("Item availability field is empty");
 
         Item item = ItemMapper.dtoToItem(itemDto);
-        return itemMemoryStorage.addItem(item, ownerId);
+        return itemInMemoryStorage.addItem(item, ownerId);
     }
 
     @Override
     public ItemDto editItem(Integer itemId, Integer ownerId, ItemDto itemDto) {
         if (userInMemoryStorage.getUser(ownerId) == null) throw new NotFoundException("User is not found");
-        if (!itemMemoryStorage.getUserIdByItemId(itemId).equals(ownerId))
+        if (!itemInMemoryStorage.getUserIdByItemId(itemId).equals(ownerId))
             throw new NotFoundException("User is not an owner of the item");
 
-        Item oldItem = itemMemoryStorage.getItemById(itemId);
+        Item oldItem = itemInMemoryStorage.getItemById(itemId);
 
         if (itemDto.getAvailable() != oldItem.getAvailable() && itemDto.getAvailable() != null)
             oldItem.setAvailable(itemDto.getAvailable());
@@ -49,25 +51,25 @@ public class ItemServiceImpl implements ItemService {
             oldItem.setDescription(itemDto.getDescription());
 
         try {
-            itemMemoryStorage.updateItem(oldItem);
+            itemInMemoryStorage.updateItem(oldItem);
         } catch (IndexOutOfBoundsException e) {
             throw new NotFoundException("Item is not found");
         }
 
-        return ItemMapper.itemToDto(itemMemoryStorage.getItemById(itemId));
+        return ItemMapper.itemToDto(itemInMemoryStorage.getItemById(itemId));
 
     }
 
     @Override
 
     public ItemDto getItemById(Integer itemId) {
-        ItemDto itemDto = ItemMapper.itemToDto(itemMemoryStorage.getItemById(itemId));
+        ItemDto itemDto = ItemMapper.itemToDto(itemInMemoryStorage.getItemById(itemId));
         return itemDto;
     }
 
     @Override
     public Collection<ItemDto> getAllOwnersItems(Integer ownerId) {
-        return itemMemoryStorage.getAllOwnersItems(ownerId)
+        return itemInMemoryStorage.getAllOwnersItems(ownerId)
                 .stream()
                 .map(ItemMapper::itemToDto)
                 .collect(Collectors.toList());
@@ -75,7 +77,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Collection<ItemDto> findItemByWord(String text) {
-        return itemMemoryStorage.findItemByWord(text)
+        return itemInMemoryStorage.findItemByWord(text)
                 .stream()
                 .map(ItemMapper::itemToDto)
                 .collect(Collectors.toList());
@@ -83,14 +85,14 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Collection<ItemDto> getAll() {
-        return itemMemoryStorage.getAll()
+        return itemInMemoryStorage.getAll()
                 .stream()
                 .map(ItemMapper::itemToDto)
                 .collect(Collectors.toList());
     }
 
     public String removeItem(Integer itemId) {
-        itemMemoryStorage.removeItem(itemId);
+        itemInMemoryStorage.removeItem(itemId);
         return "Item " + itemId + " is deleted";
     }
 }
