@@ -18,15 +18,15 @@ public class ItemInMemoryStorage {
 
 
     public ItemDto addItem(Item item, Integer ownerId) {
-        item.setId(itemId++);
-        items.put(item.getId(), item);
-        itemOwnerMap.put(item.getId(), ownerId);
+        item.setItemId(itemId++);
+        items.put(item.getItemId(), item);
+        itemOwnerMap.put(item.getItemId(), ownerId);
 
         return ItemMapper.itemToDto(item);
     }
 
     public void updateItem(Item item) {
-        items.put(item.getId(), item);
+        items.put(item.getItemId(), item);
     }
 
     public Collection<Integer> getUserIds() {

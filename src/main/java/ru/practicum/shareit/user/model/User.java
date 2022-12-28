@@ -4,19 +4,21 @@ import lombok.Data;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.model.Item;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 
 @Data
 @Entity
+@Table(name = "users")
 public class User {
     @Id
-    private int id;
+    @GeneratedValue
+    private int userId;
     private String name;
     private String email;
     @OneToMany(mappedBy = "booker")
     private List<Booking> bookings;
+    @OneToMany(mappedBy = "owner")
+    private List<Item> items;
 
 }
