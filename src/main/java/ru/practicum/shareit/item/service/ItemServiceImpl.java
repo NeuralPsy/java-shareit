@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.*;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.storage.ItemInMemoryStorage;
 import ru.practicum.shareit.user.storage.UserInMemoryStorage;
 
@@ -17,10 +19,15 @@ public class ItemServiceImpl implements ItemService {
     private final ItemInMemoryStorage itemInMemoryStorage;
     private final UserInMemoryStorage userInMemoryStorage;
 
+    private  final CommentRepository commentRepository;
+
     @Autowired
-    public ItemServiceImpl(ItemInMemoryStorage storage, UserInMemoryStorage userInMemoryStorage) {
+    public ItemServiceImpl(ItemInMemoryStorage storage,
+                           UserInMemoryStorage userInMemoryStorage,
+                           CommentRepository commentRepository) {
         this.itemInMemoryStorage = storage;
         this.userInMemoryStorage = userInMemoryStorage;
+        this.commentRepository = commentRepository;
     }
 
     @Override
@@ -94,5 +101,10 @@ public class ItemServiceImpl implements ItemService {
     public String removeItem(Integer itemId) {
         itemInMemoryStorage.removeItem(itemId);
         return "Item " + itemId + " is deleted";
+    }
+
+    public String postComment(Comment comment) {
+        commentRepository.save(comment);
+        return comment.getText();
     }
 }

@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
 import ru.practicum.shareit.item.dto.ItemDto;
 
@@ -78,6 +79,12 @@ public class ItemController {
     public String removeItem(@PathVariable Integer itemId) {
         return service.removeItem(itemId);
     }
+
+    @PostMapping("/{itemId}/comment")
+    public String postComment(@PathVariable Integer itemId, @RequestBody Comment comment){
+        return service.postComment(comment);
+    }
+
 
 
 }
