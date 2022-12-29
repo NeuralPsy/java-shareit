@@ -2,6 +2,7 @@ package ru.practicum.shareit.user.model;
 
 import lombok.Data;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 
 import javax.persistence.*;
@@ -20,5 +21,7 @@ public class User {
     private List<Booking> bookings;
     @OneToMany(mappedBy = "owner")
     private List<Item> items;
+    @OneToMany(mappedBy = "commentId")
+    private List<Comment> comments;
 
 }
