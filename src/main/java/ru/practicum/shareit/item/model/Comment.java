@@ -15,6 +15,9 @@ public class Comment {
     private String text;
     private LocalDateTime postDate;
     @ManyToOne
+    @JoinColumn(referencedColumnName = "itemId")
+    private Item item;
+    @ManyToOne
     @JoinColumn(referencedColumnName = "userId")
     private User commentator;
 }
