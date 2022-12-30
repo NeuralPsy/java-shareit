@@ -15,12 +15,13 @@ public class Booking {
     @Id
     @GeneratedValue
     private int bookingId;
-    private LocalDateTime start;
-    private LocalDateTime end;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     @OneToOne
+    @JoinColumn(name = "itemId")
     private Item item;
     @ManyToOne
-    @JoinColumn(referencedColumnName = "userId")
+    @JoinColumn(name = "userId")
     private User booker;
     private BookingStatus status;
 

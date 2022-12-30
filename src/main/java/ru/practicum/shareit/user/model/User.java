@@ -21,7 +21,7 @@ public class User {
     private List<Booking> bookings;
     @OneToMany(mappedBy = "owner")
     private List<Item> items;
-    @OneToMany(mappedBy = "commentId")
+    @OneToMany(mappedBy = "commentator")
     private List<Comment> comments;
 
 }

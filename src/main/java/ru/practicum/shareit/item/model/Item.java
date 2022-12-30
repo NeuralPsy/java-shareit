@@ -23,8 +23,6 @@ public class Item {
     private User owner;
     @OneToMany(mappedBy = "commentId")
     private List<Comment> comments;
-    @OneToOne
-    private Booking booking;
     private String request;
 
 }
