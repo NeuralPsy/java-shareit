@@ -99,8 +99,10 @@ public class ItemServiceImpl implements ItemService {
         return "Item " + itemId + " is deleted";
     }
 
-    public String postComment(Comment comment) {
-        commentRepository.save(comment);
-        return comment.getText();
+    public Comment postComment(Integer itemId, Comment comment, Integer ownerId) {
+        if (!userRepository.existsById(ownerId)) throw new NotFoundException("User is not found");
+        Item item = itemRepository.getById(itemId);
+        comment.setItem(item);
+        return commentRepository.save(comment);
     }
 }
