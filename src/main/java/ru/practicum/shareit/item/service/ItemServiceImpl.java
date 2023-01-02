@@ -9,31 +9,19 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.item.storage.ItemInMemoryStorage;
 import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.user.storage.UserInMemoryStorage;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 
 @Service
 public class ItemServiceImpl implements ItemService {
-    private final ItemInMemoryStorage itemInMemoryStorage;
-    private final UserInMemoryStorage userInMemoryStorage;
-
     private final UserRepository userRepository;
-
     private  final CommentRepository commentRepository;
-
     private final ItemRepository itemRepository;
-
     @Autowired
-    public ItemServiceImpl(ItemInMemoryStorage storage,
-                           UserInMemoryStorage userInMemoryStorage,
-                           CommentRepository commentRepository,
-                           ItemRepository itemRepository, UserRepository userRepository) {
-        this.itemInMemoryStorage = storage;
-        this.userInMemoryStorage = userInMemoryStorage;
+    public ItemServiceImpl(CommentRepository commentRepository, ItemRepository itemRepository,
+                           UserRepository userRepository) {
         this.commentRepository = commentRepository;
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
@@ -60,7 +48,7 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException("User is not an owner of the item");
         if (!itemRepository.existsById(itemId)) throw new NotFoundException("Item is not found");
 
-        Item oldItem = itemInMemoryStorage.getItemById(itemId);
+        Item oldItem = itemRepository.getById(itemId);
 
         if (itemDto.getAvailable() != oldItem.getAvailable() && itemDto.getAvailable() != null)
             oldItem.setAvailable(itemDto.getAvailable());
