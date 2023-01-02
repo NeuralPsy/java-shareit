@@ -80,7 +80,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Collection<ItemDto> findItemByWord(String text) {
-        return itemRepository.findAllByNameContainsOrDescriptionContains(text)
+        return itemRepository.findItemByWord(text)
                 .stream()
                 .map(ItemMapper::itemToDto)
                 .collect(Collectors.toList());
