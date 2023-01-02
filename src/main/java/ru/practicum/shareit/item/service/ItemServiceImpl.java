@@ -8,7 +8,9 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
+import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.storage.ItemInMemoryStorage;
+import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.storage.UserInMemoryStorage;
 
 import java.util.Collection;
@@ -19,20 +21,27 @@ public class ItemServiceImpl implements ItemService {
     private final ItemInMemoryStorage itemInMemoryStorage;
     private final UserInMemoryStorage userInMemoryStorage;
 
+    private final UserRepository userRepository;
+
     private  final CommentRepository commentRepository;
+
+    private final ItemRepository itemRepository;
 
     @Autowired
     public ItemServiceImpl(ItemInMemoryStorage storage,
                            UserInMemoryStorage userInMemoryStorage,
-                           CommentRepository commentRepository) {
+                           CommentRepository commentRepository,
+                           ItemRepository itemRepository, UserRepository userRepository) {
         this.itemInMemoryStorage = storage;
         this.userInMemoryStorage = userInMemoryStorage;
         this.commentRepository = commentRepository;
+        this.itemRepository = itemRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
     public ItemDto addItem(ItemDto itemDto, Integer ownerId) {
-        if (!userInMemoryStorage.findById(ownerId)) throw new NotFoundException("User is not found");
+        if (!userRepository.existsById(ownerId)) throw new NotFoundException("User is not found");
         if (itemDto.getName() == null || itemDto.getName().isEmpty())
             throw new EmptyItemFieldException("Item name is empty");
         if (itemDto.getDescription() == null || itemDto.getDescription().isEmpty())
@@ -40,14 +49,16 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getAvailable() == null) throw new EmptyItemFieldException("Item availability field is empty");
 
         Item item = ItemMapper.dtoToItem(itemDto);
-        return itemInMemoryStorage.addItem(item, ownerId);
+        ItemDto itemDtoReturned = ItemMapper.itemToDto(itemRepository.save(item));
+        return itemDtoReturned;
     }
 
     @Override
     public ItemDto editItem(Integer itemId, Integer ownerId, ItemDto itemDto) {
-        if (userInMemoryStorage.getUser(ownerId) == null) throw new NotFoundException("User is not found");
-        if (!itemInMemoryStorage.getUserIdByItemId(itemId).equals(ownerId))
+        if (!userRepository.existsById(ownerId)) throw new NotFoundException("User is not found");
+        if (!ownerId.equals(itemRepository.getById(itemId).getOwner().getUserId()))
             throw new NotFoundException("User is not an owner of the item");
+        if (!itemRepository.existsById(itemId)) throw new NotFoundException("Item is not found");
 
         Item oldItem = itemInMemoryStorage.getItemById(itemId);
 
@@ -57,34 +68,31 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getDescription() != oldItem.getDescription() && itemDto.getDescription() != null)
             oldItem.setDescription(itemDto.getDescription());
 
-        try {
-            itemInMemoryStorage.updateItem(oldItem);
-        } catch (IndexOutOfBoundsException e) {
-            throw new NotFoundException("Item is not found");
-        }
+       itemRepository.updateItem(oldItem.getName(), oldItem.getAvailable(), oldItem.getDescription(),
+                    oldItem.getItemId());
 
-        return ItemMapper.itemToDto(itemInMemoryStorage.getItemById(itemId));
+        return ItemMapper.itemToDto(itemRepository.getById(itemId));
 
     }
 
     @Override
 
     public ItemDto getItemById(Integer itemId) {
-        ItemDto itemDto = ItemMapper.itemToDto(itemInMemoryStorage.getItemById(itemId));
+        ItemDto itemDto = ItemMapper.itemToDto(itemRepository.getById(itemId));
         return itemDto;
     }
 
     @Override
     public Collection<ItemDto> getAllOwnersItems(Integer ownerId) {
-        return itemInMemoryStorage.getAllOwnersItems(ownerId)
+        return itemRepository.findAllByOwnerUserId(ownerId)
                 .stream()
-                .map(ItemMapper::itemToDto)
+                .map(item -> ItemMapper.itemToDto(item))
                 .collect(Collectors.toList());
     }
 
     @Override
     public Collection<ItemDto> findItemByWord(String text) {
-        return itemInMemoryStorage.findItemByWord(text)
+        return itemRepository.findAllByNameContainsOrDescriptionContains(text)
                 .stream()
                 .map(ItemMapper::itemToDto)
                 .collect(Collectors.toList());
@@ -92,14 +100,14 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Collection<ItemDto> getAll() {
-        return itemInMemoryStorage.getAll()
+        return itemRepository.findAll()
                 .stream()
                 .map(ItemMapper::itemToDto)
                 .collect(Collectors.toList());
     }
 
     public String removeItem(Integer itemId) {
-        itemInMemoryStorage.removeItem(itemId);
+        itemRepository.deleteById(itemId);
         return "Item " + itemId + " is deleted";
     }
 
