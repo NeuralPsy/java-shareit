@@ -14,14 +14,10 @@ public class ItemMapper {
 
     public static ItemDto itemToDto(Item item) {
         ItemDto itemDto = new ItemDto();
-        List<CommentDto> comments = new ArrayList<>();
         itemDto.setId(item.getItemId());
         itemDto.setName(item.getName());
         itemDto.setDescription(item.getDescription());
         itemDto.setAvailable(item.getAvailable());
-        item.getComments().forEach(comment -> comments.add(CommentMapper.commentToDto(comment)));
-        itemDto.setComments(comments);
-
         return itemDto;
     }
 

@@ -9,8 +9,10 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -36,7 +38,10 @@ public class ItemServiceImpl implements ItemService {
             throw new EmptyItemFieldException("Item description is empty");
         if (itemDto.getAvailable() == null) throw new EmptyItemFieldException("Item availability field is empty");
 
+        User owner = userRepository.getById(ownerId);
+
         Item item = ItemMapper.dtoToItem(itemDto);
+        item.setOwner(owner);
         ItemDto itemDtoReturned = ItemMapper.itemToDto(itemRepository.save(item));
         return itemDtoReturned;
     }
@@ -56,16 +61,16 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getDescription() != oldItem.getDescription() && itemDto.getDescription() != null)
             oldItem.setDescription(itemDto.getDescription());
 
-       itemRepository.updateItem(oldItem.getName(), oldItem.getAvailable(), oldItem.getDescription(),
-                    oldItem.getItemId());
+
+       itemRepository.save(oldItem);
 
         return ItemMapper.itemToDto(itemRepository.getById(itemId));
 
     }
 
     @Override
-
     public ItemDto getItemById(Integer itemId) {
+        if (!itemRepository.existsById(itemId)) throw new NotFoundException("Item is not found");
         ItemDto itemDto = ItemMapper.itemToDto(itemRepository.getById(itemId));
         return itemDto;
     }
@@ -80,7 +85,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Collection<ItemDto> findItemByWord(String text) {
-        return itemRepository.findItemByWord(text)
+
+        if (text.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return itemRepository.findAllByWord(text)
                 .stream()
                 .map(ItemMapper::itemToDto)
                 .collect(Collectors.toList());

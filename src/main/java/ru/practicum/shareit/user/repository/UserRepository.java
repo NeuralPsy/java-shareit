@@ -12,9 +12,4 @@ import javax.transaction.Transactional;
 @Component
 public interface UserRepository extends JpaRepository<User, Integer> {
     boolean existsByEmail(String email);
-
-    @Transactional
-    @Modifying
-    @Query("update User set name = :name, email = :email where userId = :userId")
-    Integer updateUser(@Param("name") String name, @Param("email") String email, @Param("userId") Integer userId);
 }
