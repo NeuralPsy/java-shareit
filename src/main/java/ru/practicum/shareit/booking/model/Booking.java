@@ -17,11 +17,11 @@ public class Booking {
     private int bookingId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    @OneToOne
-    @JoinColumn(name = "itemId")
+    @ManyToOne
+    @JoinColumn(referencedColumnName = "itemId")
     private Item item;
     @ManyToOne
-    @JoinColumn(name = "userId")
+    @JoinColumn(referencedColumnName = "userId")
     private User booker;
     private BookingStatus status;
 

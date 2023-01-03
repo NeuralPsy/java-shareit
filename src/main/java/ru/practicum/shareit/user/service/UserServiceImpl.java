@@ -7,7 +7,6 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.UserAlreadyExistsException;
 import ru.practicum.shareit.exception.WrongEmailFormatException;
 import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.user.storage.UserInMemoryStorage;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
@@ -21,7 +20,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Autowired
-    public UserServiceImpl(UserInMemoryStorage storage, UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -29,16 +28,25 @@ public class UserServiceImpl implements UserService {
     public UserDto addUser(UserDto userDto) {
         User user = UserMapper.dtoToUser(userDto);
         if (user.getEmail() == null || user.getEmail().isEmpty()) throw new EmptyEmailException("Email is empty");
-        if (userRepository.existsByEmail(userDto.getEmail())) throw new UserAlreadyExistsException("User Already exists");
+//        if (userRepository.existsByEmail(userDto.getEmail())) throw new UserAlreadyExistsException("User Already exists");
         if (!userDto.getEmail().contains("@")) throw new WrongEmailFormatException("Wrong email format");
 
-        return UserMapper.userToDto(userRepository.save(user));
+        User userReturned;
+
+        try {
+            userReturned = userRepository.save(user);
+        } catch (UserAlreadyExistsException e){
+            throw new UserAlreadyExistsException("User Already exists");
+        }
+
+        return UserMapper.userToDto(userReturned);
 
 
     }
 
     @Override
     public UserDto getUser(Integer userId) {
+        if (!userRepository.existsById(userId)) throw new NotFoundException("User does not exist");
         return UserMapper.userToDto(userRepository.getById(userId));
     }
 
@@ -51,8 +59,9 @@ public class UserServiceImpl implements UserService {
 
         if (user.getName() != userDto.getName() && userDto.getName() != null) user.setName(userDto.getName());
         if (user.getEmail() != userDto.getEmail() && userDto.getEmail() != null) user.setEmail(userDto.getEmail());
+        userRepository.updateUser(user.getName(), user.getEmail(), userId);
 
-        return UserMapper.userToDto(userRepository.updateUser(user.getName(), user.getEmail(), userId));
+        return UserMapper.userToDto(userRepository.findById(userId).get());
     }
 
     @Override

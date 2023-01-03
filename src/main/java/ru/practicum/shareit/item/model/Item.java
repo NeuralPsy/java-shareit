@@ -14,7 +14,7 @@ import java.util.List;
 @Table(name = "items")
 public class Item {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int itemId;
     private String name;
     private String description;
@@ -24,5 +24,7 @@ public class Item {
     private User owner;
     @OneToMany(mappedBy = "commentId")
     private List<Comment> comments;
+    @OneToMany(mappedBy = "id")
+    private List<ItemRequest> request;
 
 }

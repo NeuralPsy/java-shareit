@@ -14,7 +14,8 @@ public class ItemRequest {
     @GeneratedValue
     private int id;
     private String description;
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(referencedColumnName = "itemId")
     private Item item;
     @ManyToOne
     @JoinColumn(referencedColumnName = "userId")
