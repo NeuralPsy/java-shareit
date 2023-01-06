@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.exception.*;
 
 import javax.validation.ValidationException;
+import java.rmi.AccessException;
 
 @RestControllerAdvice
 public class ErrorHandler {
@@ -20,14 +21,20 @@ public class ErrorHandler {
     @ExceptionHandler({
             EmptyEmailException.class,
             WrongEmailFormatException.class,
-            EmptyItemFieldException.class})
+            EmptyItemFieldException.class,
+            ItemIsUnavailableException.class,
+            WrongBookingDurationDates.class,
+            BookingStateDoesntExistException.class,
+            AlreadyApprovedException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequest(final RuntimeException e) {
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler({
-            NotFoundException.class})
+            NotFoundException.class,
+            NotBookerOrOwnerException.class,
+            NotAnOwnerException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFound(final RuntimeException e) {
         return new ErrorResponse(e.getMessage());

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Table(name ="bookings")
 public class Booking {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int bookingId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;

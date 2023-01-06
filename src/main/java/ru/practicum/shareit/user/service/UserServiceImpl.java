@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(UserDto userDto, Integer userId) {
-        if (!userRepository.existsById(userId)) throw new NotFoundException("User is not found");
+        if (!userRepository.existsById(userId)) throw new NotFoundException("User does not exist");
         if (userRepository.existsByEmail(userDto.getEmail())) throw new UserAlreadyExistsException("Email already exists");
 
         User user = userRepository.getById(userId);

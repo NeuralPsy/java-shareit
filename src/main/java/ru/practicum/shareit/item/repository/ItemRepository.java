@@ -11,8 +11,9 @@ import java.util.Collection;
 @Component
 public interface ItemRepository extends JpaRepository<Item, Integer> {
 
-
     Collection<Item> findAllByOwnerUserId(Integer ownerId);
+
+    Item findByItemIdAndOwnerUserId(Integer itemId, Integer userId);
 
     @Query(
             "FROM Item " +
@@ -22,4 +23,5 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
                     ") AND available = true"
     )
     Collection<Item> findAllByWord(@Param("text") String text);
+
 }

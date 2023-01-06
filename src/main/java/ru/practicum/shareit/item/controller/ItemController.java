@@ -51,8 +51,8 @@ public class ItemController {
      * @return DTO object item is returned in accordance with it's ID (itemId param)
      */
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@PathVariable Integer itemId) {
-        return service.getItemById(itemId);
+    public ItemDto getItemById(@PathVariable Integer itemId, @RequestHeader("X-Sharer-User-Id") Integer userId) {
+        return service.getItemById(itemId, userId);
     }
 
     /**
