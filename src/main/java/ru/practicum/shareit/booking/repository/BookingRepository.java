@@ -37,4 +37,25 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     @Query("from Booking where item.itemId = :itemId and startTime > :curTime order by startTime asc")
     Booking getNextForItem(@Param("itemId") Integer itemId, @Param("curTime") LocalDateTime curTime);
 
+    @Query(
+            "select count (b) from Booking b " +
+                    "where b.booker.userId = ?1 " +
+                    "and b.item.itemId = ?2 " +
+                    "and b.endTime < ?3 " +
+                    "and b.status = ru.practicum.shareit.booking.status.BookingStatus.APPROVED"
+    )
+    Integer findByByOwnerOrBooker(@Param("userId") Integer userId, @Param("itemId") Integer itemId,
+                                              @Param("now") LocalDateTime now);
+
+    @Query("from Booking where booker.userId = :userId and startTime <= :now and endTime >= :now")
+    Collection<Booking> findCurrentBookings(@Param("userId") Integer userId, @Param("now") LocalDateTime now);
+
+    @Query("from Booking where booker.userId = :userId and endTime < :now")
+    Collection<Booking> findPastBookings(@Param("userId") Integer userId, @Param("now") LocalDateTime now);
+
+    @Query("SELECT b FROM Booking b WHERE b.item.owner.userId = :userId AND b.startTime <= :now AND b.endTime >= :now")
+    Collection<Booking> findCurrentBookingsOwner(@Param("userId") Integer userId, LocalDateTime now);
+
+    @Query("from Booking where item.owner.userId = :userId and endTime < :now")
+    Collection<Booking> findPastBookingsOwner(@Param("userId") Integer userId, @Param("now") LocalDateTime now);
 }

@@ -83,22 +83,30 @@ public class BookingService {
 
     public Collection<BookingDto> getUserBookings(Integer userId, String state) {
         if (!userRepository.existsById(userId)) throw new NotFoundException("User does not exist");
-        Collection<Booking> bookings;
-        Collection<String> statuses = Arrays.stream(BookingStatus.values()).map(value -> value.name()).collect(Collectors.toList());
-        if (state.toLowerCase().equals("all")) {
-            bookings = bookingRepository.findByBooker_UserId(userId);
+        Collection<Booking> bookings = null;
+        String status = state.toUpperCase();
+        switch (status) {
+            case "ALL" :
+                bookings = bookingRepository.findByBooker_UserId(userId);
+                break;
+            case "FUTURE":
+                bookings = bookingRepository.findFutureBookings(userId);
+                break;
+            case "CURRENT":
+                bookings = bookingRepository.findCurrentBookings(userId, LocalDateTime.now());
+                break;
+            case "PAST":
+                bookings = bookingRepository.findPastBookings(userId, LocalDateTime.now());
+                break;
+            case "WAITING":
+            case "REJECTED":
+                BookingStatus otherStatus1 = BookingStatus.valueOf(status);
+                bookings = bookingRepository.findByBooker_UserIdAndAndStatus(userId, otherStatus1);
+                break;
+            default:
+                throw new BookingStateDoesntExistException("Unknown state: "+state);
 
-        }
 
-        else if (state.toLowerCase().equals("future")){
-            bookings = bookingRepository.findFutureBookings(userId);
-        }
-        else if (statuses.contains(state.toUpperCase())){
-            BookingStatus status = BookingStatus.valueOf(state.toUpperCase());
-            bookings = bookingRepository.findByBooker_UserIdAndAndStatus(userId, status);
-        }
-        else {
-            throw new BookingStateDoesntExistException("Unknown state: "+state);
         }
 
         return bookings.stream()
@@ -109,22 +117,32 @@ public class BookingService {
     }
 
 
-    public Collection<BookingDto> getAllItemsBookings(Integer ownerId, String state) {
-        if(!userRepository.existsById(ownerId)) throw new NotFoundException("User does not exist");
-        Collection<Booking> bookings;
-        BookingStatus status;
-        Collection<String> statuses = Arrays.stream(BookingStatus.values()).map(value -> value.name()).collect(Collectors.toList());
-        if (state.toLowerCase().contains("all")) {
-            bookings = bookingRepository.findByItem_Owner_UserId(ownerId);
+    public Collection<BookingDto> getAllItemsBookings(Integer userId, String state) {
+        if(!userRepository.existsById(userId)) throw new NotFoundException("User does not exist");
+        Collection<Booking> bookings = null;
+        String status = state.toUpperCase();
+        switch (status) {
+            case "ALL" :
+                bookings = bookingRepository.findByItem_Owner_UserId(userId);
+                break;
+            case "FUTURE":
+                bookings = bookingRepository.findFutureBookingsOwner(userId);
+                break;
+            case "CURRENT":
+                bookings = bookingRepository.findCurrentBookingsOwner(userId, LocalDateTime.now());
+                break;
+            case "PAST":
+                bookings = bookingRepository.findPastBookingsOwner(userId, LocalDateTime.now());
+                break;
+            case "WAITING":
+            case "REJECTED":
+                BookingStatus otherStatus1 = BookingStatus.valueOf(status);
+                bookings = bookingRepository.findByItem_Owner_UserIdAndStatus(userId, otherStatus1);
+                break;
+            default:
+                throw new BookingStateDoesntExistException("Unknown state: "+state);
 
-        }  else if (state.toLowerCase().equals("future")){
-            bookings = bookingRepository.findFutureBookingsOwner(ownerId);
-        }
-        else if (statuses.contains(state.toUpperCase())){
-            status = BookingStatus.valueOf(state.toUpperCase());
-            bookings = bookingRepository.findByItem_Owner_UserIdAndStatus(ownerId, status);
-        } else {
-            throw new BookingStateDoesntExistException("Unknown state: "+state);
+
         }
 
         return bookings.stream()

@@ -7,6 +7,8 @@ import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.*;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Comment;
@@ -81,14 +83,15 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto getItemById(Integer itemId, Integer userId) {
         if (!itemRepository.existsById(itemId)) throw new NotFoundException("Item is not found");
         Item item = itemRepository.getById(itemId);
+        List<Comment> comments = commentRepository.findAllByItemItemId(itemId).stream().collect(Collectors.toList());
 
         if(Objects.equals(userId, item.getOwner().getUserId())) {
             Booking lastBooking = getLastBooking(item.getItemId());
             Booking nextBooking = getNextBooking(item.getItemId());
-            return ItemMapper.itemToDto(item, lastBooking, nextBooking);
+            return ItemMapper.itemToDto(item, lastBooking, nextBooking, comments);
         }
 
-        return ItemMapper.itemToDto(item);
+        return ItemMapper.itemToDto(item, comments);
     }
 
     @Override
@@ -99,7 +102,10 @@ public class ItemServiceImpl implements ItemService {
                 .map(item -> {
                             Booking lastBooking = getLastBooking(item.getItemId());
                             Booking nextBooking = getNextBooking(item.getItemId());
-                            ItemDto itemDto = ItemMapper.itemToDto(item, lastBooking, nextBooking);
+                            List<Comment> comments = commentRepository.findAllByItemItemId(item.getItemId())
+                                    .stream().collect(Collectors.toList());
+
+                            ItemDto itemDto = ItemMapper.itemToDto(item, lastBooking, nextBooking, comments);
                             return itemDto;
                         }
                 ).collect(Collectors.toList());
@@ -124,11 +130,23 @@ public class ItemServiceImpl implements ItemService {
         return "Item " + itemId + " is deleted";
     }
 
-    public Comment postComment(Integer itemId, Comment comment, Integer ownerId) {
-        if (!userRepository.existsById(ownerId)) throw new NotFoundException("User is not found");
+    public CommentDto postComment(Integer itemId, Comment comment, Integer userId) {
         Item item = itemRepository.getById(itemId);
+        if (comment.getText().equals("") || comment.getText() == null) throw new CommentException("Comment text should not be empty");
+//        if (!userRepository.existsById(userId)) throw new NotFoundException("User is not found");
+//        if (!bookingRepository.existsByItem_ItemId(itemId)) throw new BookingException("Booking is not found");
+        if (!isAcceptedToComment(userId, itemId)) throw new BookingException("Only booker or owner may post comments");
+        User user = userRepository.getById(userId);
+
         comment.setItem(item);
-        return commentRepository.save(comment);
+        comment.setPostDate(LocalDateTime.now());
+        comment.setCommentator(user);
+        return CommentMapper.commentToDto(commentRepository.save(comment));
+    }
+
+    private boolean isAcceptedToComment(Integer userId, Integer itemId) {
+        Integer bookingsSize = bookingRepository.findByByOwnerOrBooker(userId, itemId, LocalDateTime.now());
+        return (bookingsSize > 0) && (bookingsSize != null);
     }
 
     private Booking getLastBooking(Integer itemId) {

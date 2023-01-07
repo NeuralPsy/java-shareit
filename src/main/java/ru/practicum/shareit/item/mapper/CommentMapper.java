@@ -7,6 +7,12 @@ public class CommentMapper {
     public static CommentDto commentToDto(Comment comment){
         CommentDto commentDto = new CommentDto();
         commentDto.setText(comment.getText());
+        commentDto.setId(comment.getCommentId());
+//        if (comment.getCommentator().getName() != null) {
+//            commentDto.setAuthorName(comment.getCommentator().getName());
+//        }
+        commentDto.setAuthorName(comment.getCommentator().getName());
+        commentDto.setCreated(comment.getPostDate());
         return commentDto;
     }
 }

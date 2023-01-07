@@ -83,7 +83,8 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public Comment postComment(@PathVariable Integer itemId, @RequestBody Comment comment, @RequestHeader Integer userId){
+    public CommentDto postComment(@PathVariable Integer itemId, @RequestBody Comment comment,
+                               @RequestHeader("X-Sharer-User-Id") Integer userId){
         return service.postComment(itemId, comment, userId);
     }
 

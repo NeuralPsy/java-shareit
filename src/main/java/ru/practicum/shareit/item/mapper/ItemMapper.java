@@ -9,10 +9,12 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public class ItemMapper {
@@ -20,13 +22,18 @@ public class ItemMapper {
 
 
 
-    public static ItemDto itemToDto(Item item, Booking last, Booking next) {
+    public static ItemDto itemToDto(Item item, Booking last, Booking next, List<Comment> comments) {
 
         ItemDto itemDto = new ItemDto();
         itemDto.setId(item.getItemId());
         itemDto.setName(item.getName());
         itemDto.setDescription(item.getDescription());
         itemDto.setAvailable(item.getAvailable());
+        itemDto.setComments(
+                comments.stream()
+                        .map(comment -> CommentMapper.commentToDto(comment))
+                        .collect(Collectors.toList())
+        );
         if (last != null) {
             itemDto.setLastBooking(BookingMapper.bookingToDtoWithBooker(last));
         }
@@ -37,13 +44,29 @@ public class ItemMapper {
     }
 
 
-    public static ItemDto itemToDto(Item item) {
+    public static ItemDto itemToDto(Item item, List<Comment> comments) {
 
         ItemDto itemDto = new ItemDto();
         itemDto.setId(item.getItemId());
         itemDto.setName(item.getName());
         itemDto.setDescription(item.getDescription());
         itemDto.setAvailable(item.getAvailable());
+        itemDto.setComments(
+                comments.stream()
+                        .map(comment -> CommentMapper.commentToDto(comment))
+                        .collect(Collectors.toList())
+        );
+        return itemDto;
+    }
+
+
+    public static ItemDto itemToDto(Item item) {
+        ItemDto itemDto = new ItemDto();
+        itemDto.setId(item.getItemId());
+        itemDto.setName(item.getName());
+        itemDto.setDescription(item.getDescription());
+        itemDto.setAvailable(item.getAvailable());
+
         return itemDto;
     }
 

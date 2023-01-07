@@ -25,7 +25,9 @@ public class ErrorHandler {
             ItemIsUnavailableException.class,
             WrongBookingDurationDates.class,
             BookingStateDoesntExistException.class,
-            AlreadyApprovedException.class})
+            AlreadyApprovedException.class,
+            BookingException.class,
+            CommentException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequest(final RuntimeException e) {
         return new ErrorResponse(e.getMessage());
