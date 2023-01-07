@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.exception.*;
 
 import javax.validation.ValidationException;
-import java.rmi.AccessException;
 
 @RestControllerAdvice
 public class ErrorHandler {

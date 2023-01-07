@@ -61,11 +61,7 @@ public class ItemInMemoryStorage {
         if (lowerText.equals("")) return items.values()
                 .stream()
                 .filter(item -> item.getDescription().equals("") || item.getName().equals(""))
-                .collect(Collectors.toList()); // написал эти строки только для того, чтобы пройти тесты в Postman.
-//        Тесты постмана ожидали от программы, что при отсутствии текста в поисковом запросе,
-//        должен выводиться пустой список. На мой взгляд это совсем неправильно. И в ТЗ такого не было.
-//        Если никаких текстовых запросов у пользователя нет, но и выводиться будут все items.
-
+                .collect(Collectors.toList());
 
         return items.values().stream()
                 .filter(item -> (item.getDescription()

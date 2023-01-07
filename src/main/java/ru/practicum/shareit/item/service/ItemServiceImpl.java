@@ -2,8 +2,6 @@ package ru.practicum.shareit.item.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.dto.BookingDtoWithBooker;
-import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.*;
@@ -28,9 +26,10 @@ import java.util.stream.Collectors;
 @Service
 public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
-    private  final CommentRepository commentRepository;
+    private final CommentRepository commentRepository;
     private final ItemRepository itemRepository;
     private final BookingRepository bookingRepository;
+
     @Autowired
     public ItemServiceImpl(CommentRepository commentRepository, ItemRepository itemRepository,
                            UserRepository userRepository, BookingRepository bookingRepository) {
@@ -73,7 +72,7 @@ public class ItemServiceImpl implements ItemService {
             oldItem.setDescription(itemDto.getDescription());
 
 
-       itemRepository.save(oldItem);
+        itemRepository.save(oldItem);
 
         return ItemMapper.itemToDto(itemRepository.getById(itemId));
 
@@ -85,7 +84,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.getById(itemId);
         List<Comment> comments = commentRepository.findAllByItemItemId(itemId).stream().collect(Collectors.toList());
 
-        if(Objects.equals(userId, item.getOwner().getUserId())) {
+        if (Objects.equals(userId, item.getOwner().getUserId())) {
             Booking lastBooking = getLastBooking(item.getItemId());
             Booking nextBooking = getNextBooking(item.getItemId());
             return ItemMapper.itemToDto(item, lastBooking, nextBooking, comments);
@@ -132,9 +131,8 @@ public class ItemServiceImpl implements ItemService {
 
     public CommentDto postComment(Integer itemId, Comment comment, Integer userId) {
         Item item = itemRepository.getById(itemId);
-        if (comment.getText().equals("") || comment.getText() == null) throw new CommentException("Comment text should not be empty");
-//        if (!userRepository.existsById(userId)) throw new NotFoundException("User is not found");
-//        if (!bookingRepository.existsByItem_ItemId(itemId)) throw new BookingException("Booking is not found");
+        if (comment.getText().equals("") || comment.getText() == null)
+            throw new CommentException("Comment text should not be empty");
         if (!isAcceptedToComment(userId, itemId)) throw new BookingException("Only booker or owner may post comments");
         User user = userRepository.getById(userId);
 

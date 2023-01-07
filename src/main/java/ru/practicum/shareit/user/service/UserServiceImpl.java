@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
 
         try {
             userReturned = userRepository.save(user);
-        } catch (UserAlreadyExistsException e){
+        } catch (UserAlreadyExistsException e) {
             throw new UserAlreadyExistsException("User Already exists");
         }
 
@@ -53,7 +53,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(UserDto userDto, Integer userId) {
         if (!userRepository.existsById(userId)) throw new NotFoundException("User does not exist");
-        if (userRepository.existsByEmail(userDto.getEmail())) throw new UserAlreadyExistsException("Email already exists");
+        if (userRepository.existsByEmail(userDto.getEmail()))
+            throw new UserAlreadyExistsException("Email already exists");
 
         User user = userRepository.getById(userId);
 

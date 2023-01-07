@@ -18,9 +18,7 @@ import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.rmi.AccessException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -34,16 +32,16 @@ public class BookingService {
 
     @Autowired
     public BookingService(BookingRepository bookingRepository, UserRepository userRepository,
-                          ItemRepository itemRepository){
+                          ItemRepository itemRepository) {
         this.bookingRepository = bookingRepository;
         this.userRepository = userRepository;
         this.itemRepository = itemRepository;
     }
 
     public BookingDto getById(Integer bookingId, Integer userId) {
-        if(!bookingRepository.existsById(bookingId)) throw new NotFoundException("Booking does not exist");
+        if (!bookingRepository.existsById(bookingId)) throw new NotFoundException("Booking does not exist");
         Booking booking = bookingRepository.getById(bookingId);
-        if(!(userId.equals(booking.getBooker().getUserId()) ||
+        if (!(userId.equals(booking.getBooker().getUserId()) ||
                 userId.equals(booking.getItem().getOwner().getUserId()))) {
             throw new NotBookerOrOwnerException("Access denied");
         }
@@ -59,16 +57,18 @@ public class BookingService {
         Booking booking = BookingMapper.fromInitialDto(bookingDto);
 
 
-
         if (!item.getAvailable()) throw new ItemIsUnavailableException("The item is not available for booking");
-        if (booking.getEndTime().isBefore(booking.getStartTime())) throw new WrongBookingDurationDates("End date cannot be before start date");
-        if (booking.getStartTime().isBefore(LocalDateTime.now())) throw new WrongBookingDurationDates("Start date cannot be before current date");
+        if (booking.getEndTime().isBefore(booking.getStartTime()))
+            throw new WrongBookingDurationDates("End date cannot be before start date");
+        if (booking.getStartTime().isBefore(LocalDateTime.now()))
+            throw new WrongBookingDurationDates("Start date cannot be before current date");
 
         booking.setBooker(booker);
         booking.setStatus(BookingStatus.WAITING);
         booking.setItem(item);
 
-        if(userId.equals(booking.getItem().getOwner().getUserId())) throw new NotBookerOrOwnerException("Not possible to book own item");
+        if (userId.equals(booking.getItem().getOwner().getUserId()))
+            throw new NotBookerOrOwnerException("Not possible to book own item");
 
 
         Booking bookingToReturn = bookingRepository.save(booking);
@@ -86,7 +86,7 @@ public class BookingService {
         Collection<Booking> bookings = null;
         String status = state.toUpperCase();
         switch (status) {
-            case "ALL" :
+            case "ALL":
                 bookings = bookingRepository.findByBooker_UserId(userId);
                 break;
             case "FUTURE":
@@ -104,7 +104,7 @@ public class BookingService {
                 bookings = bookingRepository.findByBooker_UserIdAndAndStatus(userId, otherStatus1);
                 break;
             default:
-                throw new BookingStateDoesntExistException("Unknown state: "+state);
+                throw new BookingStateDoesntExistException("Unknown state: " + state);
 
 
         }
@@ -118,11 +118,11 @@ public class BookingService {
 
 
     public Collection<BookingDto> getAllItemsBookings(Integer userId, String state) {
-        if(!userRepository.existsById(userId)) throw new NotFoundException("User does not exist");
+        if (!userRepository.existsById(userId)) throw new NotFoundException("User does not exist");
         Collection<Booking> bookings = null;
         String status = state.toUpperCase();
         switch (status) {
-            case "ALL" :
+            case "ALL":
                 bookings = bookingRepository.findByItem_Owner_UserId(userId);
                 break;
             case "FUTURE":
@@ -140,7 +140,7 @@ public class BookingService {
                 bookings = bookingRepository.findByItem_Owner_UserIdAndStatus(userId, otherStatus1);
                 break;
             default:
-                throw new BookingStateDoesntExistException("Unknown state: "+state);
+                throw new BookingStateDoesntExistException("Unknown state: " + state);
 
 
         }
@@ -154,10 +154,12 @@ public class BookingService {
 
     public BookingDto approveBooking(Integer bookingId, Boolean approved, Integer userId) {
         Booking booking = bookingRepository.getById(bookingId);
-        if(booking.getStatus().equals(BookingStatus.APPROVED)) throw new AlreadyApprovedException("You cannot approve booking twice");
+        if (booking.getStatus().equals(BookingStatus.APPROVED))
+            throw new AlreadyApprovedException("You cannot approve booking twice");
         booking.setStatus(approved ? BookingStatus.APPROVED : BookingStatus.REJECTED);
 
-        if(!userId.equals(booking.getItem().getOwner().getUserId())) throw new NotAnOwnerException("Only owner of the item ia able to approve booking");
+        if (!userId.equals(booking.getItem().getOwner().getUserId()))
+            throw new NotAnOwnerException("Only owner of the item ia able to approve booking");
 //        booking.getItem().setAvailable(false);
         Booking bookingToReturn = bookingRepository.save(booking);
         UserDto booker = UserMapper.userToDto(bookingToReturn.getBooker());

@@ -47,7 +47,7 @@ public class UserController {
 
     /**
      * @param userDto JSON object of new version of DTO user that comes from request body
-     * @param userId comes from path as variable. This is ID of user that is wanted to be edited (updated)
+     * @param userId  comes from path as variable. This is ID of user that is wanted to be edited (updated)
      * @return DTO object of updated user is returned when added into storage
      */
     @PatchMapping("/{userId}")

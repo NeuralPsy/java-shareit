@@ -4,12 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoCreate;
-import ru.practicum.shareit.booking.mapper.BookingMapper;
-import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.service.BookingService;
 
-import java.rmi.AccessException;
 import java.util.Collection;
 
 @RestController
@@ -20,40 +16,40 @@ public class BookingController {
 
 
     @Autowired
-    public BookingController(BookingService service){
+    public BookingController(BookingService service) {
         this.service = service;
 
     }
 
 
     @PostMapping
-    public BookingDto addBooking(@RequestBody BookingDtoCreate bookingDto, @RequestHeader("X-Sharer-User-Id") Integer userId){
+    public BookingDto addBooking(@RequestBody BookingDtoCreate bookingDto, @RequestHeader("X-Sharer-User-Id") Integer userId) {
         return service.addBooking(bookingDto, userId);
 
     }
 
     @GetMapping("/{bookingId}")
     public BookingDto getBookingById(@PathVariable Integer bookingId,
-                                     @RequestHeader("X-Sharer-User-Id") Integer userId){
+                                     @RequestHeader("X-Sharer-User-Id") Integer userId) {
         return service.getById(bookingId, userId);
     }
 
     @PatchMapping("/{bookingId}")
     public BookingDto approveBooking(@PathVariable Integer bookingId,
-                                  @RequestParam("approved") Boolean approved,
-                                  @RequestHeader("X-Sharer-User-Id") Integer userId){
+                                     @RequestParam("approved") Boolean approved,
+                                     @RequestHeader("X-Sharer-User-Id") Integer userId) {
         return service.approveBooking(bookingId, approved, userId);
     }
 
     @GetMapping
     public Collection<BookingDto> getCurrentUserBookings(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                                      @RequestParam(name = "state", defaultValue = "all") String state){
+                                                         @RequestParam(name = "state", defaultValue = "all") String state) {
         return service.getUserBookings(userId, state);
     }
 
     @GetMapping("/owner")
     public Collection<BookingDto> getAllItemsBookings(@RequestHeader("X-Sharer-User-Id") Integer ownerId,
-                                                         @RequestParam(name = "state", defaultValue = "all") String state){
+                                                      @RequestParam(name = "state", defaultValue = "all") String state) {
         return service.getAllItemsBookings(ownerId, state);
     }
 }

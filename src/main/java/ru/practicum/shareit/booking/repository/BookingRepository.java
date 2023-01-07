@@ -45,7 +45,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
                     "and b.status = ru.practicum.shareit.booking.status.BookingStatus.APPROVED"
     )
     Integer findByByOwnerOrBooker(@Param("userId") Integer userId, @Param("itemId") Integer itemId,
-                                              @Param("now") LocalDateTime now);
+                                  @Param("now") LocalDateTime now);
 
     @Query("from Booking where booker.userId = :userId and startTime <= :now and endTime >= :now")
     Collection<Booking> findCurrentBookings(@Param("userId") Integer userId, @Param("now") LocalDateTime now);
