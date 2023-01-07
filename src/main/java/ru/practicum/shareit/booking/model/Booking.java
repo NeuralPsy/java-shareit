@@ -23,6 +23,7 @@ public class Booking {
     @ManyToOne
     @JoinColumn(referencedColumnName = "userId")
     private User booker;
+    @Enumerated(EnumType.STRING)
     private BookingStatus status;
 
 
