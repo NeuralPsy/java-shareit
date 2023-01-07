@@ -53,7 +53,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     @Query("from Booking where booker.userId = :userId and endTime < :now")
     Collection<Booking> findPastBookings(@Param("userId") Integer userId, @Param("now") LocalDateTime now);
 
-    @Query("SELECT b FROM Booking b WHERE b.item.owner.userId = :userId AND b.startTime <= :now AND b.endTime >= :now")
+    @Query("from Booking where item.owner.userId = :userId and startTime <= :now and endTime >= :now")
     Collection<Booking> findCurrentBookingsOwner(@Param("userId") Integer userId, LocalDateTime now);
 
     @Query("from Booking where item.owner.userId = :userId and endTime < :now")
