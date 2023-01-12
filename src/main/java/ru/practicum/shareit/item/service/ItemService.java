@@ -9,11 +9,10 @@ public interface ItemService {
 
     ItemDto editItem(Integer itemId, Integer ownerId, ItemDto itemDto);
 
-    ItemDto getItemById(Integer itemId);
+    ItemDto getItemById(Integer itemId, Integer userId);
 
     Collection<ItemDto> getAllOwnersItems(Integer ownerId);
 
     Collection<ItemDto> findItemByWord(String text);
 
-    Collection<ItemDto> getAll();
 }

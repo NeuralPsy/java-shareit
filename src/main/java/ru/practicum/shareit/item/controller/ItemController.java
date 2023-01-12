@@ -2,6 +2,8 @@ package ru.practicum.shareit.item.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
 import ru.practicum.shareit.item.dto.ItemDto;
 
@@ -23,7 +25,7 @@ public class ItemController {
 
     /**
      * @param itemDto JSON object of DTO item that comes from request body
-     * @param userId comes from request header "X-Sharer-User-Id"
+     * @param userId  comes from request header "X-Sharer-User-Id"
      * @return DTO object of item with ID is returned when added into storage
      */
     @PostMapping
@@ -32,7 +34,7 @@ public class ItemController {
     }
 
     /**
-     * @param itemId comes from path as variable. This is ID of item that user wants to edit (update)
+     * @param itemId  comes from path as variable. This is ID of item that user wants to edit (update)
      * @param ownerId comes from request header "X-Sharer-User-Id"
      * @param itemDto JSON object of new version of DTO item that comes from request body
      * @return DTO object of updated item is returned when added into storage
@@ -48,8 +50,8 @@ public class ItemController {
      * @return DTO object item is returned in accordance with it's ID (itemId param)
      */
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@PathVariable Integer itemId) {
-        return service.getItemById(itemId);
+    public ItemDto getItemById(@PathVariable Integer itemId, @RequestHeader("X-Sharer-User-Id") Integer userId) {
+        return service.getItemById(itemId, userId);
     }
 
     /**
@@ -77,6 +79,12 @@ public class ItemController {
     @DeleteMapping("/{itemId}")
     public String removeItem(@PathVariable Integer itemId) {
         return service.removeItem(itemId);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto postComment(@PathVariable Integer itemId, @RequestBody Comment comment,
+                                  @RequestHeader("X-Sharer-User-Id") Integer userId) {
+        return service.postComment(itemId, comment, userId);
     }
 
 

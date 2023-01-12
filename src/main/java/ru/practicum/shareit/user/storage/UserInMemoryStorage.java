@@ -14,7 +14,7 @@ public class UserInMemoryStorage {
     private static final Map<String, User> users = new HashMap<>();
 
     public User addUser(User user) {
-        user.setId(id++);
+        user.setUserId(id++);
         users.put(user.getEmail(), user);
         return user;
     }
@@ -22,7 +22,7 @@ public class UserInMemoryStorage {
     public User getUser(Integer userId) {
         return users.values()
                 .stream()
-                .filter(user -> userId.equals(user.getId()))
+                .filter(user -> userId.equals(user.getUserId()))
                 .collect(Collectors.toList())
                 .get(0);
     }
@@ -36,7 +36,7 @@ public class UserInMemoryStorage {
     public void deleteUser(Integer userId) {
         String userEmail = users.values()
                 .stream()
-                .filter(user -> userId.equals(user.getId()))
+                .filter(user -> userId.equals(user.getUserId()))
                 .collect(Collectors.toList())
                 .get(0)
                 .getEmail();
@@ -56,7 +56,7 @@ public class UserInMemoryStorage {
         List<User> usersList = new ArrayList<>();
         users.values()
                 .stream()
-                .filter(user -> userId.equals(user.getId()))
+                .filter(user -> userId.equals(user.getUserId()))
                 .forEach(usersList::add);
         return usersList.size() != 0;
 
